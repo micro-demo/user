@@ -5,14 +5,36 @@ package user;
 option go_package = "./proto;user";
 
 service User {
-	rpc Call(Request) returns (Response) {}
-	rpc UserInfo(Request) returns (Response) {}
+  rpc UserRegister(UserRegisterRequest) returns (UserRegisterResponse) {}
+  rpc UserLogin(LoginRequest) returns (UserLoginResponse) {}
+  rpc GetUserInfo(GetUserInfoRequest) returns (GetUserInfoResponse) {}
 }
 
-
-message Request {
-	string name = 1;
+//注册
+message UserRegisterRequest {
+  string user_name = 1;
+  string first_name = 2;
+  string pwd = 3;
 }
 
-message Response {
-	string msg = 1;}
+message UserRegisterResponse {
+  string message = 1;}
+//登陆
+message LoginRequest {
+  string user_name = 1;
+  string pwd = 2;
+}
+
+message UserLoginResponse {
+  bool is_success = 1;}
+
+//查看用户信息
+message GetUserInfoRequest {
+  string user_name = 1;
+}
+
+message GetUserInfoResponse {
+  string user_id = 1;
+  string user_name = 2;
+  string first_name = 3;
+}
