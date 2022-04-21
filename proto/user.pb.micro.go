@@ -6,6 +6,7 @@ package user
 import (
 	fmt "fmt"
 	proto "github.com/golang/protobuf/proto"
+	_ "google.golang.org/protobuf/types/known/structpb"
 	math "math"
 )
 
@@ -42,9 +43,9 @@ func NewUserEndpoints() []*api.Endpoint {
 // Client API for User service
 
 type UserService interface {
-	UserRegister(ctx context.Context, in *UserRegisterRequest, opts ...client.CallOption) (*UserRegisterResponse, error)
-	UserLogin(ctx context.Context, in *LoginRequest, opts ...client.CallOption) (*UserLoginResponse, error)
-	GetUserInfo(ctx context.Context, in *GetUserInfoRequest, opts ...client.CallOption) (*GetUserInfoResponse, error)
+	UserRegister(ctx context.Context, in *UserRegisterRequest, opts ...client.CallOption) (*CommonResponse, error)
+	UserLogin(ctx context.Context, in *UserLoginRequest, opts ...client.CallOption) (*CommonResponse, error)
+	GetUserInfo(ctx context.Context, in *GetUserInfoRequest, opts ...client.CallOption) (*CommonResponse, error)
 }
 
 type userService struct {
@@ -59,9 +60,9 @@ func NewUserService(name string, c client.Client) UserService {
 	}
 }
 
-func (c *userService) UserRegister(ctx context.Context, in *UserRegisterRequest, opts ...client.CallOption) (*UserRegisterResponse, error) {
+func (c *userService) UserRegister(ctx context.Context, in *UserRegisterRequest, opts ...client.CallOption) (*CommonResponse, error) {
 	req := c.c.NewRequest(c.name, "User.UserRegister", in)
-	out := new(UserRegisterResponse)
+	out := new(CommonResponse)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
 		return nil, err
@@ -69,9 +70,9 @@ func (c *userService) UserRegister(ctx context.Context, in *UserRegisterRequest,
 	return out, nil
 }
 
-func (c *userService) UserLogin(ctx context.Context, in *LoginRequest, opts ...client.CallOption) (*UserLoginResponse, error) {
+func (c *userService) UserLogin(ctx context.Context, in *UserLoginRequest, opts ...client.CallOption) (*CommonResponse, error) {
 	req := c.c.NewRequest(c.name, "User.UserLogin", in)
-	out := new(UserLoginResponse)
+	out := new(CommonResponse)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
 		return nil, err
@@ -79,9 +80,9 @@ func (c *userService) UserLogin(ctx context.Context, in *LoginRequest, opts ...c
 	return out, nil
 }
 
-func (c *userService) GetUserInfo(ctx context.Context, in *GetUserInfoRequest, opts ...client.CallOption) (*GetUserInfoResponse, error) {
+func (c *userService) GetUserInfo(ctx context.Context, in *GetUserInfoRequest, opts ...client.CallOption) (*CommonResponse, error) {
 	req := c.c.NewRequest(c.name, "User.GetUserInfo", in)
-	out := new(GetUserInfoResponse)
+	out := new(CommonResponse)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
 		return nil, err
@@ -92,16 +93,16 @@ func (c *userService) GetUserInfo(ctx context.Context, in *GetUserInfoRequest, o
 // Server API for User service
 
 type UserHandler interface {
-	UserRegister(context.Context, *UserRegisterRequest, *UserRegisterResponse) error
-	UserLogin(context.Context, *LoginRequest, *UserLoginResponse) error
-	GetUserInfo(context.Context, *GetUserInfoRequest, *GetUserInfoResponse) error
+	UserRegister(context.Context, *UserRegisterRequest, *CommonResponse) error
+	UserLogin(context.Context, *UserLoginRequest, *CommonResponse) error
+	GetUserInfo(context.Context, *GetUserInfoRequest, *CommonResponse) error
 }
 
 func RegisterUserHandler(s server.Server, hdlr UserHandler, opts ...server.HandlerOption) error {
 	type user interface {
-		UserRegister(ctx context.Context, in *UserRegisterRequest, out *UserRegisterResponse) error
-		UserLogin(ctx context.Context, in *LoginRequest, out *UserLoginResponse) error
-		GetUserInfo(ctx context.Context, in *GetUserInfoRequest, out *GetUserInfoResponse) error
+		UserRegister(ctx context.Context, in *UserRegisterRequest, out *CommonResponse) error
+		UserLogin(ctx context.Context, in *UserLoginRequest, out *CommonResponse) error
+		GetUserInfo(ctx context.Context, in *GetUserInfoRequest, out *CommonResponse) error
 	}
 	type User struct {
 		user
@@ -114,14 +115,14 @@ type userHandler struct {
 	UserHandler
 }
 
-func (h *userHandler) UserRegister(ctx context.Context, in *UserRegisterRequest, out *UserRegisterResponse) error {
+func (h *userHandler) UserRegister(ctx context.Context, in *UserRegisterRequest, out *CommonResponse) error {
 	return h.UserHandler.UserRegister(ctx, in, out)
 }
 
-func (h *userHandler) UserLogin(ctx context.Context, in *LoginRequest, out *UserLoginResponse) error {
+func (h *userHandler) UserLogin(ctx context.Context, in *UserLoginRequest, out *CommonResponse) error {
 	return h.UserHandler.UserLogin(ctx, in, out)
 }
 
-func (h *userHandler) GetUserInfo(ctx context.Context, in *GetUserInfoRequest, out *GetUserInfoResponse) error {
+func (h *userHandler) GetUserInfo(ctx context.Context, in *GetUserInfoRequest, out *CommonResponse) error {
 	return h.UserHandler.GetUserInfo(ctx, in, out)
 }

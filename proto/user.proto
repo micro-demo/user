@@ -1,14 +1,16 @@
 syntax = "proto3";
 
 package user;
-
+import "google/protobuf/struct.proto";
 option go_package = "./proto;user";
 
 service User {
-  rpc UserRegister(UserRegisterRequest) returns (UserRegisterResponse) {}
-  rpc UserLogin(LoginRequest) returns (UserLoginResponse) {}
-  rpc GetUserInfo(GetUserInfoRequest) returns (GetUserInfoResponse) {}
+  rpc UserRegister(UserRegisterRequest) returns (CommonResponse) {}
+  rpc UserLogin(UserLoginRequest) returns (CommonResponse) {}
+  rpc GetUserInfo(GetUserInfoRequest) returns (CommonResponse) {}
 }
+//没有参数传递
+message EmptyResponse {}
 
 //注册
 message UserRegisterRequest {
@@ -17,24 +19,24 @@ message UserRegisterRequest {
   string pwd = 3;
 }
 
-message UserRegisterResponse {
-  string message = 1;}
+
 //登陆
-message LoginRequest {
+message UserLoginRequest {
   string user_name = 1;
   string pwd = 2;
 }
 
-message UserLoginResponse {
-  bool is_success = 1;}
+
 
 //查看用户信息
 message GetUserInfoRequest {
   string user_name = 1;
 }
 
-message GetUserInfoResponse {
-  string user_id = 1;
-  string user_name = 2;
-  string first_name = 3;
+
+//data = {"code",0,"message":"xxx","data":{"name":"panda"}}
+message CommonResponse {
+  string code = 1;
+  string message = 2;
+  google.protobuf.Value data = 3 ;
 }
