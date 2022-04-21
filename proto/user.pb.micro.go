@@ -42,8 +42,9 @@ func NewUserEndpoints() []*api.Endpoint {
 // Client API for User service
 
 type UserService interface {
-	Call(ctx context.Context, in *Request, opts ...client.CallOption) (*Response, error)
-	UserInfo(ctx context.Context, in *Request, opts ...client.CallOption) (*Response, error)
+	UserRegister(ctx context.Context, in *UserRegisterRequest, opts ...client.CallOption) (*UserRegisterResponse, error)
+	UserLogin(ctx context.Context, in *LoginRequest, opts ...client.CallOption) (*UserLoginResponse, error)
+	GetUserInfo(ctx context.Context, in *GetUserInfoRequest, opts ...client.CallOption) (*GetUserInfoResponse, error)
 }
 
 type userService struct {
@@ -58,9 +59,9 @@ func NewUserService(name string, c client.Client) UserService {
 	}
 }
 
-func (c *userService) Call(ctx context.Context, in *Request, opts ...client.CallOption) (*Response, error) {
-	req := c.c.NewRequest(c.name, "User.Call", in)
-	out := new(Response)
+func (c *userService) UserRegister(ctx context.Context, in *UserRegisterRequest, opts ...client.CallOption) (*UserRegisterResponse, error) {
+	req := c.c.NewRequest(c.name, "User.UserRegister", in)
+	out := new(UserRegisterResponse)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
 		return nil, err
@@ -68,9 +69,19 @@ func (c *userService) Call(ctx context.Context, in *Request, opts ...client.Call
 	return out, nil
 }
 
-func (c *userService) UserInfo(ctx context.Context, in *Request, opts ...client.CallOption) (*Response, error) {
-	req := c.c.NewRequest(c.name, "User.UserInfo", in)
-	out := new(Response)
+func (c *userService) UserLogin(ctx context.Context, in *LoginRequest, opts ...client.CallOption) (*UserLoginResponse, error) {
+	req := c.c.NewRequest(c.name, "User.UserLogin", in)
+	out := new(UserLoginResponse)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userService) GetUserInfo(ctx context.Context, in *GetUserInfoRequest, opts ...client.CallOption) (*GetUserInfoResponse, error) {
+	req := c.c.NewRequest(c.name, "User.GetUserInfo", in)
+	out := new(GetUserInfoResponse)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
 		return nil, err
@@ -81,14 +92,16 @@ func (c *userService) UserInfo(ctx context.Context, in *Request, opts ...client.
 // Server API for User service
 
 type UserHandler interface {
-	Call(context.Context, *Request, *Response) error
-	UserInfo(context.Context, *Request, *Response) error
+	UserRegister(context.Context, *UserRegisterRequest, *UserRegisterResponse) error
+	UserLogin(context.Context, *LoginRequest, *UserLoginResponse) error
+	GetUserInfo(context.Context, *GetUserInfoRequest, *GetUserInfoResponse) error
 }
 
 func RegisterUserHandler(s server.Server, hdlr UserHandler, opts ...server.HandlerOption) error {
 	type user interface {
-		Call(ctx context.Context, in *Request, out *Response) error
-		UserInfo(ctx context.Context, in *Request, out *Response) error
+		UserRegister(ctx context.Context, in *UserRegisterRequest, out *UserRegisterResponse) error
+		UserLogin(ctx context.Context, in *LoginRequest, out *UserLoginResponse) error
+		GetUserInfo(ctx context.Context, in *GetUserInfoRequest, out *GetUserInfoResponse) error
 	}
 	type User struct {
 		user
@@ -101,10 +114,14 @@ type userHandler struct {
 	UserHandler
 }
 
-func (h *userHandler) Call(ctx context.Context, in *Request, out *Response) error {
-	return h.UserHandler.Call(ctx, in, out)
+func (h *userHandler) UserRegister(ctx context.Context, in *UserRegisterRequest, out *UserRegisterResponse) error {
+	return h.UserHandler.UserRegister(ctx, in, out)
 }
 
-func (h *userHandler) UserInfo(ctx context.Context, in *Request, out *Response) error {
-	return h.UserHandler.UserInfo(ctx, in, out)
+func (h *userHandler) UserLogin(ctx context.Context, in *LoginRequest, out *UserLoginResponse) error {
+	return h.UserHandler.UserLogin(ctx, in, out)
+}
+
+func (h *userHandler) GetUserInfo(ctx context.Context, in *GetUserInfoRequest, out *GetUserInfoResponse) error {
+	return h.UserHandler.GetUserInfo(ctx, in, out)
 }
