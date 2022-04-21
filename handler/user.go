@@ -2,32 +2,38 @@ package handler
 
 import (
 	"context"
-
 	log "github.com/micro/micro/v3/service/logger"
-
+	"google.golang.org/protobuf/types/known/structpb"
 	user "user/proto"
 )
 
 type User struct{}
 
-// Return a new handler
 func New() *User {
 	return &User{}
 }
 
-// Call is a single request handler called via client.Call or the generated client code
-//curl "http://localhost:8080/user/Call"
-func (e *User) Call(ctx context.Context, req *user.Request, rsp *user.Response) error {
+func (e *User) UserRegister(ctx context.Context, req *user.UserRegisterRequest, rsp *user.CommonResponse) error {
 	log.Info("Received User.Call request")
-	rsp.Msg = "Hello " + req.Name
+	rsp.Code = "0"       //登陆成功
+	rsp.Message = "登陆成功" //登陆成功
+	rsp.Data, _ = structpb.NewValue(make(map[string]interface{}))
 	return nil
 }
 
-// XiongYao is a single request handler called via client.Call or the generated client code
-// curl "http://localhost:8080/user/UserInfo"
-// 当访问http://localhost:8080/user/UserInfo的时候调用这个处理函数
-func (e *User) UserInfo(ctx context.Context, req *user.Request, rsp *user.Response) error {
+func (e *User) UserLogin(ctx context.Context, req *user.UserLoginRequest, rsp *user.CommonResponse) error {
 	log.Info("Received User.UserInfo request")
-	rsp.Msg = req.Name + "是大帅比"
+	rsp.Code = "0"       //登陆成功
+	rsp.Message = "登陆成功" //登陆成功
+	rsp.Data, _ = structpb.NewValue(1)
+	return nil
+}
+
+// 当访问get h
+//ttp://localhost:8080/user/UserInfo的时候调用这个处理函数
+func (e *User) GetUserInfo(ctx context.Context, req *user.GetUserInfoRequest, rsp *user.CommonResponse) error {
+	rsp.Code = "0"       //登陆成功
+	rsp.Message = "登陆成功" //登陆成功
+	rsp.Data, _ = structpb.NewValue(make(map[string]interface{}))
 	return nil
 }

@@ -11,3 +11,12 @@ type User struct {
 	//加密后密码
 	HashPassword string
 }
+
+// 用户信息序列化json
+func (u User) UserInfo() map[string]interface{} {
+	data := make(map[string]interface{})
+	data["id"] = u.ID
+	data["username"] = u.UserName
+	data["first"] = u.FirstName
+	return data
+}

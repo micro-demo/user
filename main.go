@@ -12,6 +12,7 @@ func main() {
 	// Create service
 	srv := service.New(
 		service.Name("user"),
+		service.Version("1.0"),
 	)
 
 	// Register handler
